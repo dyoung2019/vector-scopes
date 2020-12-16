@@ -1,5 +1,6 @@
-import convertRGB601 from "./convertRGB601.mjs"
+import rgbToYCbCp from "./rgbToYCbCp.mjs"
 import drawGraticules from './drawGraticules.mjs'
+import getScopeAngle from "./getScopeAngle.mjs";
 
 // initialize q5
 const q5 = new Q5();
@@ -9,22 +10,18 @@ let theta = 0
 q5.setup = () => {
   q5.createCanvas(400, 400);
 
- console.log(convertRGB601(0, 0, 255))
- console.log(convertRGB601(0, 255, 0))
- console.log(convertRGB601(255, 0, 255))
+
+  const value = rgbToYCbCp(0, 0, 255)
+ console.log('blue', value)
+ console.log('green', rgbToYCbCp(0, 255, 0))
+ console.log('magneta', rgbToYCbCp(255, 0, 255))
 }
 
 q5.draw = () => {
   const toYPbPr = (rgb) => {
-    const [y, pb, pr] = convertRGB601(...rgb)
+    const [y, pb, pr] = rgbToYCbCp(...rgb)
 
-    const invTangent = Math.atan(pr/pb)
-    const isQuad =
-      (pb >= 0) 
-        ? ((pr <= 0) ? 0 : Math.PI * 2) 
-        : Math.PI
-    
-    const angle = isQuad - invTangent
+    const angle = getScopeAngle(pb, pr)
 
     return {
       rgb,
